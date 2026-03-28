@@ -1,11 +1,27 @@
-- name: Copy files to Web Server
+name: CI/CD Deployment
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy files to Web Server
         shell: pwsh
         run: |
-          # On définit les variables pour plus de clarté
           $key = ".vagrant/machines/firewall/virtualbox/private_key"
-          
-          # On crée le dossier de destination au cas où
+          # Création du dossier au cas où il n'existe pas
           ssh -o StrictHostKeyChecking=no -p 2222 -i $key vagrant@127.0.0.1 "mkdir -p /home/vagrant/app"
-          
-          # On copie le code (On exclut les dossiers lourds pour gagner du temps)
+          # Copie des fichiers essentiels vers la VM
           scp -r -o StrictHostKeyChecking=no -P 2222 -i $key ./index.js ./package.json vagrant@127.0.0.1:/home/vagrant/app/
+
+      - name: Install and Start App
+        shell: pwsh
+        run: |
+          $key = ".vagrant/machines/firewall/virtualbox/private_key"
+          # Installation des dépendances et lancement de Node.js en arrière-plan
+          ssh -o StrictHostKeyChecking=no -p 2222 -i $key vagrant@127.0.0.1 "cd /home/vagrant/app && npm install && (pkill node || true) && nohup node index.js > output.log 2>&1 &"
