@@ -1,1 +1,1 @@
-{"dependencies":[["vagrant-triggers",["= 0.4.3"]]],"checksum":"cf3ef978184d2f2d4a580d00d98987c8b87416d0e8c390f3a30d34c468766770","vagrant_version":"2.4.9"}
+{"dependencies":[],"checksum":"1cd97bcb68e4612e79111b06aff1736afc63bb9a884847486c1933efd24cba34","vagrant_version":"2.4.9"}
