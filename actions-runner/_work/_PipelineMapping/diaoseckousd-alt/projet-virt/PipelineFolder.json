@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "diaoseckousd-alt/projet-virt",
+  "pipelineDirectory": "projet-virt",
+  "workspaceDirectory": "projet-virt\\projet-virt",
+  "repositories": {
+    "diaoseckousd-alt/projet-virt": {
+      "repositoryPath": "projet-virt\\projet-virt",
+      "lastRunOn": "03/28/2026 05:46:28 +00:00"
+    }
+  },
+  "lastRunOn": "03/28/2026 05:48:25 +00:00"
+}
