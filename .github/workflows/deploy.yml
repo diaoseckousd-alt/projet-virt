@@ -1,25 +1,11 @@
-name: CI/CD Deployment
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  deploy:
-    runs-on: self-hosted 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Copy files to Web Server
+- name: Copy files to Web Server
+        shell: pwsh
         run: |
-          # On copie tout le contenu du dossier actuel vers le Webserver
-          # On passe par le Firewall (127.0.0.1:2222) pour atteindre le Webserver (192.168.100.10)
-          scp -r -o StrictHostKeyChecking=no -P 2222 -i .vagrant/machines/firewall/virtualbox/private_key ./* vagrant@127.0.0.1:/home/vagrant/app/
-
-      - name: Install and Start App
-        run: |
-          # On se connecte au Webserver pour installer et lancer Node.js
-          ssh -o StrictHostKeyChecking=no -p 2222 -i .vagrant/machines/firewall/virtualbox/private_key vagrant@127.0.0.1 "cd /home/vagrant/app && npm install && (pkill node || true) && nohup node index.js > output.log 2>&1 &"
-
-      - name: Success Message
-        run: echo "Déploiement terminé ! Vérifie http://localhost:9090"
+          # On définit les variables pour plus de clarté
+          $key = ".vagrant/machines/firewall/virtualbox/private_key"
+          
+          # On crée le dossier de destination au cas où
+          ssh -o StrictHostKeyChecking=no -p 2222 -i $key vagrant@127.0.0.1 "mkdir -p /home/vagrant/app"
+          
+          # On copie le code (On exclut les dossiers lourds pour gagner du temps)
+          scp -r -o StrictHostKeyChecking=no -P 2222 -i $key ./index.js ./package.json vagrant@127.0.0.1:/home/vagrant/app/
