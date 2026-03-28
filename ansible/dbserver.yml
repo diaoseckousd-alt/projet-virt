@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: Installation de MariaDB (MySQL)
+      apt:
+        name: mariadb-server
+        state: present
+        update_cache: yes
+    - name: Demarrage de la base de donnees
+      service:
+        name: mariadb
+        state: started
+        enabled: yes

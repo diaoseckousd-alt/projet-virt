@@ -1,0 +1,16 @@
+name: CI/CD Deployment
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Utilise ton runner Windows
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Web Server
+        run: |
+          echo "Deploiement du code vers 192.168.100.10 via le tunnel..."
+          # Ici tu peux ajouter tes commandes de copie de fichiers

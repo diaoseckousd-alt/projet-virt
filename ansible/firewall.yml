@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: Installation outils systeme
+      apt:
+        name: [iptables-persistent, net-tools, curl, software-properties-common]
+        state: present
+        update_cache: yes
