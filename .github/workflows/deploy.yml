@@ -5,12 +5,21 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted # Utilise ton runner Windows
+    runs-on: self-hosted 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Web Server
+      - name: Copy files to Web Server
         run: |
-          echo "Deploiement du code vers 192.168.100.10 via le tunnel..."
-          # Ici tu peux ajouter tes commandes de copie de fichiers
+          # On copie tout le contenu du dossier actuel vers le Webserver
+          # On passe par le Firewall (127.0.0.1:2222) pour atteindre le Webserver (192.168.100.10)
+          scp -r -o StrictHostKeyChecking=no -P 2222 -i .vagrant/machines/firewall/virtualbox/private_key ./* vagrant@127.0.0.1:/home/vagrant/app/
+
+      - name: Install and Start App
+        run: |
+          # On se connecte au Webserver pour installer et lancer Node.js
+          ssh -o StrictHostKeyChecking=no -p 2222 -i .vagrant/machines/firewall/virtualbox/private_key vagrant@127.0.0.1 "cd /home/vagrant/app && npm install && (pkill node || true) && nohup node index.js > output.log 2>&1 &"
+
+      - name: Success Message
+        run: echo "Déploiement terminé ! Vérifie http://localhost:9090"

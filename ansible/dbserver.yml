@@ -2,13 +2,19 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Installation de MariaDB (MySQL)
+    - name: Installation de MariaDB
       apt:
         name: mariadb-server
         state: present
         update_cache: yes
-    - name: Demarrage de la base de donnees
+
+    - name: Configuration pour ecouter sur le reseau LAN
+      lineinfile:
+        path: /etc/mysql/mariadb.conf.d/50-server.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
+
+    - name: Redemarrage de MariaDB
       service:
         name: mariadb
-        state: started
-        enabled: yes
+        state: restarted

@@ -2,13 +2,32 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Installation du serveur Apache
+    - name: Installation de Nginx, Node.js et NPM
       apt:
-        name: apache2
+        name: [nginx, nodejs, npm]
         state: present
         update_cache: yes
-    - name: Activation du service Apache
+
+    - name: Configuration de Nginx en Reverse Proxy
+      copy:
+        content: |
+          server {
+              listen 80;
+              server_name _;
+
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection 'upgrade';
+                  proxy_set_header Host $host;
+                  proxy_cache_bypass $http_upgrade;
+              }
+          }
+        dest: /etc/nginx/sites-available/default
+
+    - name: Redemarrage de Nginx pour appliquer la config
       service:
-        name: apache2
-        state: started
+        name: nginx
+        state: restarted
         enabled: yes
